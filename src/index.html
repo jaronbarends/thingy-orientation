@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en-en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<title>Package turnaround</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/table.css">
+	<link rel="stylesheet" href="./components/buttons/buttons.css">
+	<link rel="stylesheet" href="./components/thingy-connector/thingy-connector.css">
+	<link rel="stylesheet" href="./components/battery-status/battery-status.css">
+</head>
+<body>
+	<div class="o-content-width">
+		
+		<div class="connect-box">
+			<input class="btn" type="button" id="connect-btn" value="connect">
+			<input class="btn btn--is-disabled" type="button" id="disconnect-btn" value="disconnect">
+		</div>
+		
+		<!-- Start battery status -->
+			<div class="battery-status" >
+				<div id="battery-icon" class="battery-icon" style="--status: 0.5;"></div>
+				<span id="battery-value">&hellip;</span>%
+			</div>
+		<!-- End battery status -->
+
+		<div>
+			state: <span id="pickupState" class="pickupState">unknown</span>
+		</div>
+
+		<table>
+			<caption>euler orientation</caption>
+			<tr>
+				<th>roll</th>
+				<th>pitch</th>
+				<th>yaw</th>
+			</tr>
+			<tr>
+				<td id="roll">&hellip;</td>
+				<td id="pitch">&hellip;</td>
+				<td id="yaw">&hellip;</td>
+			</tr>
+		</table>
+
+		<table>
+			<caption>heading</caption>
+			<tr>
+				<th>heading</th>
+			</tr>
+			<tr>
+				<td id="heading">&hellip;</td>
+			</tr>
+		</table>
+
+		<table>
+			<caption>gravity vector</caption>
+			<tr>
+				<th>x</th>
+				<th>y</th>
+				<th>z</th>
+			</tr>
+			<tr>
+				<td id="gravity-x">&hellip;</td>
+				<td id="gravity-y">&hellip;</td>
+				<td id="gravity-z">&hellip;</td>
+			</tr>
+		</table>
+
+		<table>
+			<caption>quaternion orientation</caption>
+			<tr>
+				<th>w</th>
+				<th>x</th>
+				<th>y</th>
+				<th>z</th>
+			</tr>
+			<tr>
+				<td id="quaternion-w">&hellip;</td>
+				<td id="quaternion-x">&hellip;</td>
+				<td id="quaternion-y">&hellip;</td>
+				<td id="quaternion-z">&hellip;</td>
+			</tr>
+		</table>
+
+		
+		<table>
+			<caption>rotation matrix orientation</caption>
+			<tr>
+				<td id="r1c1">&hellip;</td>
+				<td id="r1c2">&hellip;</td>
+				<td id="r1c3">&hellip;</td>
+			</tr>
+			<tr>
+				<td id="r2c2">&hellip;</td>
+				<td id="r2c1">&hellip;</td>
+				<td id="r2c3">&hellip;</td>
+			</tr>
+			<tr>
+				<td id="r3c1">&hellip;</td>
+				<td id="r3c2">&hellip;</td>
+				<td id="r3c3">&hellip;</td>
+			</tr>
+		</table>
+
+	</div><!-- /.o-content-width -->
+	<script type="module" src="./components/thingy-connector/ThingyConnector.js"></script>
+	<script type="module" src="./components/battery-status/BatteryStatus.js"></script>
+	<script type="module" src="./components/pickup-watcher/pickup-watcher.js"></script>
+	
+	<script type="module" src="./js/package-turnaround.js"></script>
+	<script type="module" src="./js/main.js"></script>
+</body>
+</html>

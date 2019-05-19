@@ -1,0 +1,9 @@
+.btn {
+	display: inline-block;
+	padding: 0.5em 1em;
+	cursor: pointer;
+}
+
+.btn--is-disabled {
+	opacity: 0.5;
+}

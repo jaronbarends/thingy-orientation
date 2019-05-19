@@ -1,0 +1,14 @@
+table {
+	display: inline-block;
+	margin: 2em;
+}
+
+td, th {
+	width: 4em;
+	border: 1px solid #ccc;;
+	padding: 0.5em;
+}
+
+td {
+	text-align: right;
+}
