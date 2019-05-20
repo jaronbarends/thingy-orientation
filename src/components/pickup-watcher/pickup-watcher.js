@@ -22,11 +22,13 @@ export default class PickupWatcher {
 			ACTIVE: 'active'
 		};
 		this.timestamp = null,
-		this.state = this.states.UNKNOWN;
+		this.state = this.states.UNKNOWN;// confirmed state
+		this.lastStates = [];
+		this.validationCount = 5;// number of equal states to validate change
 		this.isInitiated = false;
 		this.checkTimer = null;
-		this.checkInterval = 50;
-		this.threshold = 1;// threshold for change
+		this.checkInterval = 100;
+		this.threshold = 0.25;// threshold for change
 
 		this._addEventListeners();
 	}
@@ -93,10 +95,6 @@ export default class PickupWatcher {
 		this.timer = setTimeout(() => this._checkOrientation(), this.checkInterval);
 	};
 
-	_logdiff(a, pa) {
-		console.log(Math.round(Math.abs(a - pa)));
-	}
-
 
 	/**
 	* check if orientation has changed
@@ -107,9 +105,6 @@ export default class PickupWatcher {
 
 		// we can only determine if state is idle or active when both current and previous values are known
 		if (this.roll !== null && this.pitch !== null && this.yaw !== null && this.prevRoll !== null && this.prevPitch !== null && this.prevYaw !== null) {
-			// console.log(Math.abs(this.roll - this.prevRoll),
-			// Math.abs(this.yaw - this.prevPitch),
-			// Math.abs(this.roll - this.prevYaw));
 			if (
 				Math.abs(this.roll - this.prevRoll) >= this.threshold ||
 				Math.abs(this.pitch - this.prevPitch) >= this.threshold ||
@@ -120,22 +115,47 @@ export default class PickupWatcher {
 				newState = this.states.IDLE;
 			}
 
-			// this._logdiff(this.roll, this.prevRoll);
-			// this._logdiff(this.pitch, this.prevPitch);
-			// this._logdiff(this.yaw, this.prevYaw);
 		}
 
 		this.prevRoll = this.roll;
 		this.prevPitch = this.pitch;
 		this.prevYaw = this.yaw;
 
+		// check for inaccurate readings:
+		// push new state into lastStates array; if there are enough of same type,
+		// and they're different from current confirmed state, change state
+		const changeValidated = this._validateState(newState);
+
 		// when state has changed, update state and send event
-		if (newState !== this.state) {
+		if (newState !== this.state && changeValidated) {
 			this.state = newState;
 			thingyEvent.sendThingyEvent('pickupstatechange', {thingy: this.thingy, state: this.state});
 		}
 
 		this._startChecking();
+	};
+
+	/**
+	* push new state into lastStates array; if there are enough of same type,
+	* and they're different from current confirmed state, change state
+	* @returns {undefined}
+	*/
+	_validateState(newState) {
+		this.lastStates.push(newState);
+		let changeValidated = true;
+		if (this.lastStates.length > this.validationCount) {
+			this.lastStates.shift();
+			this.lastStates.forEach((state) => {
+				if (state !== newState) {
+					changeValidated = false;
+				}
+			});
+		} else {
+			// not enough values in array yet
+			changeValidated = false;
+		}
+		// console.log(this.lastStates);
+		return changeValidated;
 	};
 
 
