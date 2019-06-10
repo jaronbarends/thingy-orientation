@@ -15,6 +15,8 @@ export default class PickupWatcher {
 		this.prevRoll = null;
 		this.prevPitch = null;
 		this.prevYaw = null;
+		this.relativeYaw = null;
+		this.yawCorrection = 0;
 		
 		this.states = {
 			UNKNOWN: 'unknown',
@@ -136,6 +138,7 @@ export default class PickupWatcher {
 	};
 
 	/**
+	* euler readings are not always very trustworthy
 	* push new state into lastStates array; if there are enough of same type,
 	* and they're different from current confirmed state, change state
 	* @returns {undefined}
@@ -167,7 +170,33 @@ export default class PickupWatcher {
 		this.roll = detail.roll;
 		this.pitch = detail.pitch;
 		this.yaw = detail.yaw;
+		this.relativeYaw = this.yaw - this.yawCorrection;
+
+		thingyEvent.sendThingyEvent('relativeyawchange', {thingy: this.thingy, relativeYaw: this.relativeYaw});
 	}
+
+
+	/**
+	* calibrate the yaw
+	* @returns {undefined}
+	*/
+	_calibrateYaw(e) {
+		e.preventDefault();
+		this.yawCorrection = this.yaw;
+		const details = {roll: this.roll, pitch: this.pitch, yaw: this.yaw}
+		this._updateOrientation(details);
+	};
+
+	/**
+	* initialize button for calibrating the yaw-direction
+	* @returns {undefined}
+	*/
+	_initCalibrationButton() {
+		const cBtn = document.getElementById(`pickup-watcher-calibration-btn`);
+		if (cBtn) {
+			cBtn.addEventListener('click', (e) => this._calibrateYaw(e));
+		}
+	};
 
 
 	/**
@@ -176,7 +205,8 @@ export default class PickupWatcher {
 	*/
 	_connectHandler(e) {
 		this.thingy = e.detail.thingy;
-		this._initEulerOrientation();	
+		this._initEulerOrientation();
+		this._initCalibrationButton();
 	};
 
 }
